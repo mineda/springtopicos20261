@@ -2,6 +2,8 @@ package br.gov.sp.cps.springtopicos20261.entity;
 
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -23,6 +25,7 @@ public class Autorizacao {
     private String nome;
 
     @ManyToMany(mappedBy = "autorizacoes")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Set<Usuario> usuarios;
 
     public Long getId() {
