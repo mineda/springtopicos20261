@@ -1,12 +1,15 @@
 package br.gov.sp.cps.springtopicos20261.service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import br.gov.sp.cps.springtopicos20261.entity.Autorizacao;
 import br.gov.sp.cps.springtopicos20261.entity.Usuario;
 import br.gov.sp.cps.springtopicos20261.repository.UsuarioRepository;
 
@@ -15,8 +18,11 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     private UsuarioRepository usuarioRepo;
 
-    public UsuarioServiceImpl(UsuarioRepository usuarioRepo) {
+    private AutorizacaoService autorizacaoService;
+
+    public UsuarioServiceImpl(UsuarioRepository usuarioRepo, AutorizacaoService autorizacaoService) {
         this.usuarioRepo = usuarioRepo;
+        this.autorizacaoService = autorizacaoService;
     }
 
     @Override
@@ -29,6 +35,14 @@ public class UsuarioServiceImpl implements UsuarioService {
                 || usuario.getSenha().isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Dados de usuário inválidos!");
         }
+        Set<Autorizacao> autorizacoes = new HashSet<Autorizacao>();
+        for(Autorizacao aut : usuario.getAutorizacoes()) {
+            if(aut.getId() == null) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Dados de autorização inválidos!");
+            }
+            autorizacoes.add(autorizacaoService.buscarPorId(aut.getId()));
+        }
+        usuario.setAutorizacoes(autorizacoes);
         return usuarioRepo.save(usuario);
     }
 
