@@ -35,14 +35,16 @@ public class UsuarioServiceImpl implements UsuarioService {
                 || usuario.getSenha().isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Dados de usuário inválidos!");
         }
-        Set<Autorizacao> autorizacoes = new HashSet<Autorizacao>();
-        for(Autorizacao aut : usuario.getAutorizacoes()) {
-            if(aut.getId() == null) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Dados de autorização inválidos!");
+        if(usuario.getAutorizacoes() != null) {
+            Set<Autorizacao> autorizacoes = new HashSet<Autorizacao>();
+            for(Autorizacao aut : usuario.getAutorizacoes()) {
+                if(aut.getId() == null) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Dados de autorização inválidos!");
+                }
+                autorizacoes.add(autorizacaoService.buscarPorId(aut.getId()));
             }
-            autorizacoes.add(autorizacaoService.buscarPorId(aut.getId()));
+            usuario.setAutorizacoes(autorizacoes);
         }
-        usuario.setAutorizacoes(autorizacoes);
         return usuarioRepo.save(usuario);
     }
 
