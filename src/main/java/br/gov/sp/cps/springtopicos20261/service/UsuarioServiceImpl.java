@@ -6,6 +6,8 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -20,12 +22,16 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     private AutorizacaoService autorizacaoService;
 
-    public UsuarioServiceImpl(UsuarioRepository usuarioRepo, AutorizacaoService autorizacaoService) {
+    private PasswordEncoder encoder;
+
+    public UsuarioServiceImpl(UsuarioRepository usuarioRepo, AutorizacaoService autorizacaoService, PasswordEncoder encoder) {
         this.usuarioRepo = usuarioRepo;
         this.autorizacaoService = autorizacaoService;
+        this.encoder = encoder;
     }
 
     @Override
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER'")
     public Usuario cadastrar(Usuario usuario) {
         if(usuario == null 
                 || usuario.getId() != null
@@ -45,10 +51,12 @@ public class UsuarioServiceImpl implements UsuarioService {
             }
             usuario.setAutorizacoes(autorizacoes);
         }
+        usuario.setSenha(encoder.encode(usuario.getSenha()));
         return usuarioRepo.save(usuario);
     }
 
     @Override
+    @PreAuthorize("isAuthenticated()")
     public Usuario buscarPorId(Long id) {
         Optional<Usuario> usuarioOp = usuarioRepo.findById(id);
         if(usuarioOp.isEmpty()) {
