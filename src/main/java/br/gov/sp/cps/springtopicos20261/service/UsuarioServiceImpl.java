@@ -31,7 +31,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER'")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public Usuario cadastrar(Usuario usuario) {
         if(usuario == null 
                 || usuario.getId() != null
