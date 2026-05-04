@@ -56,13 +56,21 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    @PreAuthorize("isAuthenticated()")
     public Usuario buscarPorId(Long id) {
         Optional<Usuario> usuarioOp = usuarioRepo.findById(id);
         if(usuarioOp.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Não existe usuário com esse id!");
         }
         return usuarioOp.get();
+    }
+
+    @Override
+    @PreAuthorize("isAuthenticated()")
+    public List<Usuario> buscarPorNome(String nome) {
+        if(nome == null || nome.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Nome de usuário é obrigatório!");
+        }
+        return usuarioRepo.findByNomeContainingIgnoreCase(nome);
     }
 
     @Override

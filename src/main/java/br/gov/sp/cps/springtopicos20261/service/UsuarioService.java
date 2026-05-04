@@ -11,5 +11,7 @@ public interface UsuarioService {
     public Usuario buscarPorId(Long id);
 
     public List<Usuario> buscarTodos();
+
+    public List<Usuario> buscarPorNome(String nome);
     
 }
