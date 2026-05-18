@@ -10,6 +10,8 @@ public interface TrabalhoService {
 
     public Trabalho cadastrar(Trabalho trabalho);
 
+    public Trabalho buscarPorId(Long id);
+
     public List<Trabalho> buscarPorTituloEAutor(String titulo, String nomeAutor);
     
 }
