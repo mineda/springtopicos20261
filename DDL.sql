@@ -106,5 +106,36 @@ insert into rvr_revisor (rvr_revisao, rvr_usuario, rvr_observacao, rvr_prazo)
   values (1, 1, null, '2025-12-15'),
     (2, 1, 'Entregou correndo. Pode estar ruim.', null);
 
+create table det_detalhe (
+  det_id bigint generated always as identity,
+  det_descricao varchar(200) not null,
+  det_data_hora timestamp not null,
+  det_data_hora_alteracao timestamp,
+  det_alcance int not null,
+  det_anotacao bigint not null,
+  primary key (det_id),
+  foreign key (det_anotacao) references ant_anotacao (ant_id) on delete restrict
+);
+
+insert into det_detalhe (det_descricao, det_data_hora, det_data_hora_alteracao, det_alcance, det_anotacao)
+  values ('Detalhe 1', '2023-08-01 20:00', current_timestamp, 7, 1),
+    ('Detalhe 2', '2023-08-01 21:00', null, 2, 1);
+
+create table cor_correcao (
+  cor_id bigint generated always as identity,
+  cor_texto_antigo varchar(256) not null,
+  cor_texto_novo varchar(256) not null,
+  cor_data_hora timestamp not null,
+  cor_motivo varchar(200),
+  cor_anotacao bigint not null,
+  primary key (cor_id),
+  foreign key (cor_anotacao) references ant_anotacao (ant_id) on delete restrict
+);
+
+insert into cor_correcao (cor_texto_antigo, cor_texto_novo, cor_data_hora, cor_motivo, cor_anotacao)
+  values ('Meu novo projeto', 'Meu projeto atualizado', '2023-08-01 22:00', 'Atualização do título do projeto', 1),
+    ('Meu novo projeto', 'Meu projeto corrigido', '2023-08-01 23:00', null, 1);
+
+
 -- Execute ao final para dar acesso ao usuario spring
 grant update, delete, insert, select on all tables in schema public to spring;
